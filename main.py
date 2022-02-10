@@ -2,6 +2,7 @@ import sys
 import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
+from PyQt5 import uic
 
 SCREEN_SIZE = [600, 450]
 
@@ -14,8 +15,9 @@ class Example(QWidget):
         self.coords = [37.530887, 55.70311]
         self.scale = 0.002
         self.map_type = 'map'
+        uic.loadUi("interface.ui", self)
         self.getImage()
-        self.initUI()
+
 
     def getImage(self):
         params = {
@@ -31,18 +33,9 @@ class Example(QWidget):
             print("Http статус:", response.status_code, "(", response.reason, ")")
             sys.exit(1)
 
-        self.map = response.content
-
-    def initUI(self):
-        self.setGeometry(100, 100, *SCREEN_SIZE)
-        self.setWindowTitle('Отображение карты')
-
-        self.pixmap = QPixmap()
-        self.pixmap.loadFromData(self.map, 'PNG')
-        self.image = QLabel(self)
-        self.image.move(0, 0)
-        self.image.resize(600, 450)
-        self.image.setPixmap(self.pixmap)
+        pixmap = QPixmap()
+        pixmap.loadFromData(response.content, 'PNG')
+        self.image.setPixmap(pixmap)
 
 
 if __name__ == '__main__':
